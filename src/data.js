@@ -2,7 +2,12 @@ export const quizData = {
   html: [
     {
       question: "¿Qué significa HTML?",
-      options: ["HyperText Markup Language", "Home Tool Markup Language", "Hyperlinks and Text Markup Language", "HyperTransfer Markup Line"],
+      options: [
+        "HyperText Markup Language",
+        "Home Tool Markup Language",
+        "Hyperlinks and Text Markup Language",
+        "HyperTransfer Markup Line"
+      ],
       answer: 0
     },
     {
@@ -54,7 +59,12 @@ export const quizData = {
   css: [
     {
       question: "¿Qué significa CSS?",
-      options: ["Cascading Style Sheets", "Computer Styled Sections", "Creative Style System", "Colorful Style Sheets"],
+      options: [
+        "Cascading Style Sheets",
+        "Computer Styled Sections",
+        "Creative Style System",
+        "Colorful Style Sheets"
+      ],
       answer: 0
     },
     {
@@ -183,7 +193,12 @@ export const quizData = {
     },
     {
       question: "¿Qué significa ARIA?",
-      options: ["Accessible Rich Internet Applications", "Automatic Responsive Internet Access", "Audio Recognition Interaction Aid", "Application Rendered Input Attributes"],
+      options: [
+        "Accessible Rich Internet Applications",
+        "Automatic Responsive Internet Access",
+        "Audio Recognition Interaction Aid",
+        "Application Rendered Input Attributes"
+      ],
       answer: 0
     },
     {

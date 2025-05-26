@@ -3,6 +3,7 @@ import javascriptLogo from "./assets/javascript.svg";
 import cssLogo from "./assets/css.square.svg";
 import htmlLogo from "./assets/html.svg";
 import accesibilidadLogo from "./assets/accessibility.svg";
+//import { renderQuiz } from "./quiz.js";
 
 const app = document.querySelector("#app");
 
