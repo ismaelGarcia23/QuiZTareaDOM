@@ -21,6 +21,7 @@ export function renderQuiz(app, category) {
 
   let current = 0;
   let score = 0;
+  let userAnswers = [];
 
   const letter = (i) => String.fromCharCode(65 + i);
 
@@ -95,6 +96,7 @@ export function renderQuiz(app, category) {
 
       opt.addEventListener("click", () => {
         selected = i;
+        userAnswers.push(i);
         if (selected === q.answer) score++;
         current++;
         current < questions.length ? renderQuestion() : renderScore();
@@ -118,6 +120,7 @@ export function renderQuiz(app, category) {
     toggle.checked = document.body.classList.contains("light-theme");
     toggle.addEventListener("change", () => {
       document.body.classList.toggle("light-theme");
+      localStorage.setItem("theme", document.body.classList.contains("light-theme") ? "light" : "dark");
     });
   }
 
@@ -125,10 +128,54 @@ export function renderQuiz(app, category) {
     app.innerHTML = "";
     const result = document.createElement("div");
     result.className = "result";
-    result.innerHTML = `
-      <h2>¡Cuestionario terminado!</h2>
-      <p>Obtuviste ${score} de ${questions.length} correctas.</p>
+
+    const themeToggle = document.createElement("div");
+    themeToggle.className = "acc-theme-toggle";
+    themeToggle.innerHTML = `
+      <span>🌜</span>
+      <label class="switch">
+        <input type="checkbox" id="toggle-theme" />
+        <span class="slider"></span>
+      </label>
+      <span>🌞</span>
     `;
+    result.appendChild(themeToggle);
+
+    const toggle = themeToggle.querySelector("#toggle-theme");
+    toggle.checked = document.body.classList.contains("light-theme");
+    toggle.addEventListener("change", () => {
+      document.body.classList.toggle("light-theme");
+      localStorage.setItem("theme", document.body.classList.contains("light-theme") ? "light" : "dark");
+    });
+
+    const heading = document.createElement("h2");
+    heading.textContent = "¡Cuestionario terminado!";
+
+    const scoreText = document.createElement("p");
+    scoreText.textContent = `Obtuviste ${score} de ${questions.length} correctas.`;
+
+    result.append(heading, scoreText);
+
+    const resumen = document.createElement("div");
+    resumen.className = "summary";
+
+    questions.forEach((q, i) => {
+      const userAnswer = userAnswers[i];
+      const isCorrect = userAnswer === q.answer;
+
+      const row = document.createElement("div");
+      row.className = "summary-item";
+      row.classList.add(isCorrect ? "correct" : "incorrect");
+
+      row.innerHTML = `
+        <p><strong>${i + 1}.</strong> ${q.question}</p>
+        <p>Tu respuesta: ${q.options[userAnswer] || "No respondida"}</p>
+        <p>Respuesta correcta: ${q.options[q.answer]}</p>
+      `;
+
+      resumen.appendChild(row);
+    });
+
     const btn = document.createElement("button");
     btn.id = "go-home";
     btn.textContent = "Volver al inicio";
@@ -136,7 +183,8 @@ export function renderQuiz(app, category) {
       document.dispatchEvent(new CustomEvent("navigate", { detail: { page: "home" } }));
       document.body.classList.remove("quiz-body");
     });
-    result.appendChild(btn);
+
+    result.append(resumen, btn);
     app.appendChild(result);
   }
 
