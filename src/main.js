@@ -108,20 +108,15 @@ function checkAnswer() {
   });
 }
 
-// Mostrar resultado final
-function showFinalScore() {
-  app.innerHTML = `
-    <div class="screen">
-      <h2>Quiz Completed!</h2>
-      <p>You scored <strong>${score}</strong> out of <strong>${quizData[currentTopic].length}</strong></p>
-      <button id="playAgainBtn">Play again</button>
-    </div>
-  `;
-
-  document.getElementById('playAgainBtn').addEventListener('click', () => {
-    renderTopicSelection();
-  });
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Iniciar con la pantalla de selección
-renderTopicSelection();
+// Al iniciar la app
+applyThemeFromStorage();
+renderHome(app);
+
+// Navegacion
+document.addEventListener("navigate", (e) => {
+  //! TODO: Implementar navegacion
+});
