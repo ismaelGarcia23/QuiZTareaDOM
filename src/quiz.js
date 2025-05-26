@@ -22,6 +22,8 @@ export function renderQuiz(app, category) {
   let current = 0;
   let score = 0;
 
+  const letter = (i) => String.fromCharCode(65 + i);
+
   function renderQuestion() {
     app.innerHTML = "";
     document.body.classList.add("quiz-body");
@@ -77,10 +79,19 @@ export function renderQuiz(app, category) {
       const opt = document.createElement("section");
       opt.className = "quizzOption";
       opt.dataset.index = i;
-      opt.innerHTML = `
-        <span class="accOptionLet">${String.fromCharCode(65 + i)}</span>
-        <a><b class="accTxtOP">${option}</b></a>
-      `;
+
+      const spanLetra = document.createElement("span");
+      spanLetra.className = "accOptionLet";
+      spanLetra.textContent = letter(i);
+
+      const texto = document.createElement("b");
+      texto.className = "accTxtOP";
+      texto.textContent = option;
+
+      const enlace = document.createElement("a");
+      enlace.appendChild(texto);
+
+      opt.append(spanLetra, enlace);
 
       opt.addEventListener("click", () => {
         selected = i;
@@ -100,7 +111,7 @@ export function renderQuiz(app, category) {
     if (range) {
       const progressColor = "#d000ff";
       const backgroundTrack = "#2c3e50";
-      range.style.background = linear-gradient(`to right, ${progressColor} ${progress}%, ${backgroundTrack} ${progress}%`);
+      range.style.background = `linear-gradient(to right, ${progressColor} ${progress}%, ${backgroundTrack} ${progress}%)`;
     }
 
     const toggle = app.querySelector("#toggle-theme");
@@ -131,4 +142,3 @@ export function renderQuiz(app, category) {
 
   renderQuestion();
 }
-
