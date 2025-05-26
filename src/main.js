@@ -8,7 +8,7 @@ let currentTopic = '';
 let currentQuestionIndex = 0;
 let selectedAnswerIndex = null;
 let score = 0;
-document.createElement()
+
 // Renderizar pantalla inicial
 function renderTopicSelection() {
   app.innerHTML = `
