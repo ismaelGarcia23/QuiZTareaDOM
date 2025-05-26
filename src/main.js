@@ -1,127 +1,107 @@
-import './style.css'
-import { quizData } from './data.js';
+import "./css/style.css";
+import javascriptLogo from "./assets/javascript.svg";
+import cssLogo from "./assets/css.square.svg";
+import htmlLogo from "./assets/html.svg";
+import accesibilidadLogo from "./assets/accessibility.svg";
 
-const app = document.getElementById('app');
+const app = document.querySelector("#app");
 
-// Estado del quiz
-let currentTopic = '';
-let currentQuestionIndex = 0;
-let selectedAnswerIndex = null;
-let score = 0;
-document.createElement()
-// Renderizar pantalla inicial
-function renderTopicSelection() {
-  app.innerHTML = `
-    <div class="screen">
-      <h1>Welcome to the <strong>Frontend Quiz!</strong></h1>
-      <p>Pick a subject to get started.</p>
-      <div class="topics">
-        ${Object.keys(quizData).map(topic => `
-          <button class="topic-btn" data-topic="${topic}">${topic.toUpperCase()}</button>
-        `).join('')}
-      </div>
-    </div>
+function applyThemeFromStorage() {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light-theme");
+  } else {
+    document.body.classList.remove("light-theme");
+  }
+}
+
+export function renderHome(app) {
+  app.innerHTML = ""; 
+
+  const container = document.createElement("div");
+  container.classList.add("grid-container");
+
+  // TEMA
+  const themeToggle = document.createElement("div");
+  themeToggle.classList.add("theme-toggle");
+
+  const toggleWrapper = document.createElement("div");
+  toggleWrapper.classList.add("container-toggle");
+
+  toggleWrapper.innerHTML = `
+    <span>🌜</span>
+    <label class="switch">
+      <input type="checkbox" id="toggle-theme" />
+      <span class="slider"></span>
+    </label>
+    <span>🌞</span>
+  `;
+  themeToggle.appendChild(toggleWrapper);
+
+  // PRESENTACION
+  const presentacion = document.createElement("section");
+  presentacion.classList.add("presentacion");
+  presentacion.innerHTML = `
+    <h1>Welcome to the <b>Frontend Quizz!</b></h1>
+    <h4>Pick a subject to get started</h4>
   `;
 
-  document.querySelectorAll('.topic-btn').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const selected = e.target.dataset.topic;
-      startQuiz(selected);
+  // BOTONES
+  const buttonsContainer = document.createElement("section");
+  buttonsContainer.classList.add("buttonsquizz");
+
+  const topics = [
+    { name: "html", label: "HTML", icon: htmlLogo },
+    { name: "javascript", label: "Javascript", icon: javascriptLogo },
+    { name: "css", label: "CSS", icon: cssLogo },
+    { name: "accessibility", label: "Accessibility", icon: accesibilidadLogo }
+  ];
+
+  topics.forEach(({ name, label, icon }) => {
+    const section = document.createElement("section");
+    section.classList.add(`quizz${capitalize(name)}`);
+    section.classList.add("quizz");
+
+    section.innerHTML = `
+      <img src="${icon}" alt="${label}" />
+      <a><b>${label}</b></a>
+    `;
+
+    section.addEventListener("click", () => {
+      document.dispatchEvent(
+        new CustomEvent("navigate", { detail: { page: name } })
+      );
     });
+
+    buttonsContainer.appendChild(section);
+  });
+
+  // Renderizar todo
+  container.appendChild(themeToggle);
+  container.appendChild(presentacion);
+  container.appendChild(buttonsContainer);
+  app.appendChild(container);
+
+  // Logica toggle
+  const toggle = document.getElementById("toggle-theme");
+  toggle.checked = document.body.classList.contains("light-theme");
+
+  toggle.addEventListener("change", () => {
+    document.body.classList.toggle("light-theme");
+    const theme = document.body.classList.contains("light-theme") ? "light" : "dark";
+    localStorage.setItem("theme", theme);
   });
 }
 
-// Iniciar quiz
-function startQuiz(topic) {
-  currentTopic = topic;
-  currentQuestionIndex = 0;
-  score = 0;
-  selectedAnswerIndex = null;
-  showQuestion();
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Mostrar una pregunta
-function showQuestion() {
-  const questionData = quizData[currentTopic][currentQuestionIndex];
+// Al iniciar la app
+applyThemeFromStorage();
+renderHome(app);
 
-  app.innerHTML = `
-    <div class="screen">
-      <p>Question ${currentQuestionIndex + 1} of ${quizData[currentTopic].length}</p>
-      <h2>${questionData.question}</h2>
-      <div class="options">
-        ${questionData.options.map((opt, i) => `
-          <label class="option">
-            <input type="radio" name="answer" value="${i}" />
-            <span>${opt}</span>
-          </label>
-        `).join('')}
-      </div>
-      <button id="submitBtn">Submit answer</button>
-      <p id="errorMsg" class="error-msg" style="display: none;">Please select an option</p>
-    </div>
-  `;
-
-  document.querySelectorAll('input[name="answer"]').forEach(input => {
-    input.addEventListener('change', (e) => {
-      selectedAnswerIndex = parseInt(e.target.value);
-      document.getElementById('errorMsg').style.display = 'none';
-    });
-  });
-
-  document.getElementById('submitBtn').addEventListener('click', () => {
-    if (selectedAnswerIndex === null) {
-      document.getElementById('errorMsg').style.display = 'block';
-      return;
-    }
-
-    checkAnswer();
-  });
-}
-
-// Revisar si la respuesta es correcta
-function checkAnswer() {
-  const questionData = quizData[currentTopic][currentQuestionIndex];
-  const isCorrect = selectedAnswerIndex === questionData.answer;
-
-  if (isCorrect) score++;
-
-  // Feedback visual
-  app.innerHTML += `
-    <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
-      ${isCorrect ? '✅ Correct!' : `❌ Wrong. Correct answer: ${questionData.options[questionData.answer]}`}
-    </div>
-    <button id="nextBtn">Next</button>
-  `;
-
-  document.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = true);
-  document.getElementById('submitBtn').disabled = true;
-
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    selectedAnswerIndex = null;
-    currentQuestionIndex++;
-
-    if (currentQuestionIndex < quizData[currentTopic].length) {
-      showQuestion();
-    } else {
-      showFinalScore();
-    }
-  });
-}
-
-// Mostrar resultado final
-function showFinalScore() {
-  app.innerHTML = `
-    <div class="screen">
-      <h2>Quiz Completed!</h2>
-      <p>You scored <strong>${score}</strong> out of <strong>${quizData[currentTopic].length}</strong></p>
-      <button id="playAgainBtn">Play again</button>
-    </div>
-  `;
-
-  document.getElementById('playAgainBtn').addEventListener('click', () => {
-    renderTopicSelection();
-  });
-}
-
-// Iniciar con la pantalla de selección
-renderTopicSelection();
+// Navegacion
+document.addEventListener("navigate", (e) => {
+  //! TODO: Implementar navegacion
+});
